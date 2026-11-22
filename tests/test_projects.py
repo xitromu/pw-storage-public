@@ -1,4 +1,4 @@
-"""Подключение проекта (Т30): инструкция в CLAUDE.md, состояние папок, окно «Проекты». Только временные папки."""
+"""Подключение проекта (Т30): инструкция в AGENTS.md, состояние папок, окно «Проекты». Только временные папки."""
 
 import gc
 import shutil
@@ -29,13 +29,15 @@ class InstructionTest(unittest.TestCase):
 
     def test_creates_file(self):
         path = write_instruction(self.dir)
+        self.assertEqual(path.name, "AGENTS.md")
         text = path.read_text(encoding="utf-8")
         self.assertTrue(text.startswith(BEGIN))
-        self.assertIn("pw.py list", text)
+        self.assertIn(f'"{projects.PYTHON}" "{projects.HOME / "pw.py"}" list', text)
+        self.assertIn(f'"{projects.PYTHON}" "{projects.HOME / "pw.py"}" open', text)
         self.assertTrue(has_instruction(self.dir))
 
     def test_appends_keeps_text_bom_and_crlf(self):
-        path = self.dir / "CLAUDE.md"
+        path = self.dir / "AGENTS.md"
         path.write_bytes(b"\xef\xbb\xbf# \xd0\x9f\xd1\x80\xd0\xbe\xd0\xb5\xd0\xba\xd1\x82\r\n\r\n\xd0\xa2\xd0\xb5\xd0\xba\xd1\x81\xd1\x82\r\n")
         write_instruction(self.dir)
         raw = path.read_bytes()
@@ -45,7 +47,7 @@ class InstructionTest(unittest.TestCase):
         self.assertNotIn("\n", text.replace("\r\n", ""), "переводы строк остались CRLF")
 
     def test_replaces_block_only(self):
-        path = self.dir / "CLAUDE.md"
+        path = self.dir / "AGENTS.md"
         path.write_text(f"до\n\n{BEGIN}\nстарый текст\n{END}\n\nпосле\n", encoding="utf-8")
         write_instruction(self.dir)
         text = path.read_text(encoding="utf-8")
@@ -137,10 +139,10 @@ class WindowTest(unittest.TestCase):
     def test_connect_flow(self):
         w = self.window
         self.assertEqual(w.selected, "CLUB", "сначала выбран неподключённый проект")
-        self.assertFalse((self.root / "CLUB" / "CLAUDE.md").exists(), "без «Записать» ничего не пишется")
+        self.assertFalse((self.root / "CLUB" / "AGENTS.md").exists(), "без «Записать» ничего не пишется")
         w.show_instruction("CLUB")
         self.assertTrue(w.preview.winfo_exists())
-        self.assertFalse((self.root / "CLUB" / "CLAUDE.md").exists())
+        self.assertFalse((self.root / "CLUB" / "AGENTS.md").exists())
         w.write("CLUB")
         self.assertTrue(has_instruction(self.root / "CLUB"))
         self.assertEqual(self.audit.write.call_args.args[0], "project_connected")

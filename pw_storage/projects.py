@@ -1,9 +1,9 @@
 """Подключение проекта (Т30).
 
-Окно «Проекты»: слева все папки проектов с состоянием, справа выбранный проект — инструкция в CLAUDE.md,
+Окно «Проекты»: слева все папки проектов с состоянием, справа выбранный проект — инструкция в AGENTS.md,
 открытые файлы секретов, записи проекта, «Новая запись для проекта», «Подключить».
 
-Подключён — в CLAUDE.md проекта есть блок между метками PW_STORAGE. Блок пишется только после показа текста
+Подключён — в AGENTS.md проекта есть блок между метками PW_STORAGE. Блок пишется только после показа текста
 и «Записать»; повторная запись заменяет блок, остальной файл не трогается. Открытые файлы секретов программа
 только показывает: не читает и не удаляет.
 """
@@ -17,7 +17,7 @@ from pathlib import Path
 from tkinter import ttk
 
 from .cleanup import scan_projects
-from .config import ALL_SCOPE, HOME, SYSTEM_SCOPE
+from .config import ALL_SCOPE, HOME, PYTHON, SYSTEM_SCOPE
 from .vault import SCOPE_NAME, Row
 from .window import UI_FONT, Dark, dark_title_bar, use_dark_theme
 
@@ -25,9 +25,9 @@ BEGIN = "<!-- PW_STORAGE: начало -->"
 END = "<!-- PW_STORAGE: конец -->"
 INSTRUCTION = f"""## Секреты
 - Секреты проекта — только в хранилище PW_STORAGE. Не заводить secrets.env, .env, пароли в коде и в git.
-- Что есть: python {HOME / "pw.py"} list — номера строк и комментарии, без значений.
-- Доступ для всего проекта на срок: pw.py open --why "зачем" <номера> — владелец подтверждает выбранные строки в окне; разрешение общее для всех сессий проекта.
-- pw.py close закрывает доступ всему проекту и отменяет его ожидающие запросы.
+- Что есть: "{PYTHON}" "{HOME / "pw.py"}" list — номера строк и комментарии, без значений.
+- Доступ для всего проекта на срок: "{PYTHON}" "{HOME / "pw.py"}" open --why "зачем" НОМЕР_СТРОКИ — подставить нужные номера из list; владелец подтверждает выбранные строки в окне.
+- "{PYTHON}" "{HOME / "pw.py"}" close закрывает доступ всему проекту и отменяет его ожидающие запросы.
 - В скриптах: PwClient().get("сервис", "ключ"). Значения не печатать и не писать в файлы, журналы, чат.
 - Нужен новый секрет — попросить владельца завести его в окне «Новая запись»."""
 
@@ -38,14 +38,14 @@ def block() -> str:
 
 def has_instruction(folder: Path) -> bool:
     try:
-        return BEGIN in (Path(folder) / "CLAUDE.md").read_text(encoding="utf-8-sig")
+        return BEGIN in (Path(folder) / "AGENTS.md").read_text(encoding="utf-8-sig")
     except (OSError, UnicodeDecodeError):
         return False
 
 
 def write_instruction(folder: Path) -> Path:
     """Дописывает или заменяет блок между метками. Кодировка (с BOM или без) и переводы строк файла сохраняются."""
-    path = Path(folder) / "CLAUDE.md"
+    path = Path(folder) / "AGENTS.md"
     raw = path.read_bytes() if path.exists() else b""
     bom = raw.startswith(b"\xef\xbb\xbf")
     text = raw.decode("utf-8-sig") if raw else ""
@@ -90,7 +90,7 @@ class ProjectInfo:
 
 
 def project_folders(root: Path) -> list[str]:
-    """Имена папок проектов, подключённых к хранилищу (блок инструкции в CLAUDE.md)."""
+    """Имена папок проектов, подключённых к хранилищу (блок инструкции в AGENTS.md)."""
     root = Path(root)
     if not root.is_dir():
         return []
@@ -236,7 +236,7 @@ class ProjectsWindow:
         if not info.exists:
             self._section("Проект есть в хранилище, а папки нет. Удалить его можно в окне «Чистка».")
             return
-        self._section("Инструкция в CLAUDE.md")
+        self._section("Инструкция в AGENTS.md")
         row = tk.Frame(self.panel, bg=Dark.SURFACE)
         row.pack(fill="x")
         self._label(row, "есть" if info.instruction else "нет", fg=Dark.OK if info.instruction else Dark.WARN,
@@ -266,7 +266,7 @@ class ProjectsWindow:
             connect.configure(state="disabled")
 
     def show_instruction(self, name: str) -> None:
-        """Показ блока и «Записать»: без этого в CLAUDE.md ничего не пишется."""
+        """Показ блока и «Записать»: без этого в AGENTS.md ничего не пишется."""
         info = self.info(name)
         if info is None or not info.exists:
             return
@@ -279,7 +279,7 @@ class ProjectsWindow:
         body = tk.Frame(win, bg=Dark.BG, padx=self.px(16), pady=self.px(12))
         body.pack(fill="both", expand=True)
         dark_title_bar(win)
-        path = info.folder / "CLAUDE.md"
+        path = info.folder / "AGENTS.md"
         action = ("заменён" if info.instruction else "дописан в конец") if path.exists() else "записан в новый файл"
         self._label(body, f"В {path} будет {action} этот блок; остальной текст файла не меняется:", fg=Dark.MUTED,
                     size=9, wraplength=self.px(620)).pack(fill="x")
@@ -300,7 +300,7 @@ class ProjectsWindow:
         try:
             path = write_instruction(info.folder)
         except OSError as e:
-            self.message.configure(text=f"Не удалось записать CLAUDE.md: {type(e).__name__}", fg=Dark.ERROR)
+            self.message.configure(text=f"Не удалось записать AGENTS.md: {type(e).__name__}", fg=Dark.ERROR)
             return
         self.audit.write("project_connected", project=name, target=str(path))
         self.message.configure(text=f"Инструкция записана: {path}.", fg=Dark.OK)

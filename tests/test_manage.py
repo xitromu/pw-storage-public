@@ -351,7 +351,7 @@ class WindowTest(unittest.TestCase):
     def test_connected_project_without_records_is_a_column(self):
         projects_root = self.dir / "projects"
         (projects_root / "ALPHA").mkdir(parents=True)
-        (projects_root / "ALPHA" / "CLAUDE.md").write_text(f"{BEGIN}\n{END}\n", encoding="utf-8")
+        (projects_root / "ALPHA" / "AGENTS.md").write_text(f"{BEGIN}\n{END}\n", encoding="utf-8")
         (projects_root / "STUDIO").mkdir()
         window = self.unlock(projects_root=projects_root)
         self.assertEqual(window.model.columns, ["DELTA", "COMMON", "ALPHA", "ALL"],
