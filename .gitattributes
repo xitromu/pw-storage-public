@@ -1,0 +1,21 @@
+* text=auto
+
+# Windows-лаунчеры: только CRLF, иначе cmd.exe рвёт строки
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Исходники и документы: LF в индексе
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.in text eol=lf
+*.toml text eol=lf
+.gitignore text eol=lf
+
+# Двоичное
+*.png binary
+*.ico binary
+*.jks binary
+*.kdbx binary
+*.bin binary

@@ -1,0 +1,36 @@
+# Окружение и артефакты сборки
+.venv/
+__pycache__/
+*.py[cod]
+
+# Личное: хранилища, их каталоги, настройки, журналы — в git не попадают
+data/
+test_data/
+logs/
+*.kdbx
+*.bin
+recovery.json
+settings.json
+deploy/services/*.json
+!deploy/services/*.example.json
+
+# Секреты и ключи, которые могут лежать рядом с кодом
+secrets.env
+*.env
+.env*
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.enc
+*.bak
+*.log
+*.zip
+*.7z
+
+# Служебное
+.qoder/
+.probe-owner*
+tests/_demo_projects/

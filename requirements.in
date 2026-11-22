@@ -1,0 +1,6 @@
+# Прямые зависимости ядра. Фиксированный список с хешами — requirements.txt.
+pykeepass==4.2.0
+argon2-cffi==25.1.0
+pyotp==2.9.0
+pyzipper==0.4.0
+sv-ttk==2.6.1

@@ -1,0 +1,13 @@
+{
+  "name": "PW_DEMO_BOT",
+  "profile": "main",
+  "argv": [
+    "C:\\projects\\DEMO_A\\.venv\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "C:\\projects\\DEMO_A\\bot.py",
+    "--service"
+  ],
+  "cwd": "C:\\projects\\DEMO_A",
+  "log": "C:\\ProgramData\\PW_STORAGE_LOGS\\PW_DEMO_BOT\\service.log"
+}

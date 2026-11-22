@@ -1,0 +1,13 @@
+{
+  "name": "PW_DEMO_BOT",
+  "profile": "main",
+  "bindings": [
+    {
+      "project": "DEMO_A",
+      "row": "REPLACE_WITH_ROW_UID",
+      "service": "Telegram",
+      "key": "BOT_TOKEN",
+      "alias": "BOT_TOKEN"
+    }
+  ]
+}
